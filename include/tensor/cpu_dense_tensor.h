@@ -3,6 +3,7 @@
 
 #include "tensor.h"
 #include "t_data.h"
+#include <functional>
 
 namespace gnn
 {
@@ -21,7 +22,7 @@ public:
 	virtual ~TensorTemplate() {}
 	TensorTemplate(std::vector<size_t> l, Dtype* _data = nullptr);
 	TensorTemplate(TShape s, Dtype* _data = nullptr);
-	
+
 	virtual void Reshape(std::vector<size_t> l) override;
 	virtual MatType GetMatType() override;
 	virtual MatMode GetMatMode() override;
@@ -39,13 +40,13 @@ public:
 	 * @param      fid   The file handle
 	 */
 	virtual void Deserialize(FILE* fid) override;
-	
+
 	/**
 	 * @brief      deeply copy src to this tensor
 	 *
 	 * @param      src   the CPU dense tensor with same data type
 	 */
-	void CopyFrom(DTensor<CPU, Dtype>& src);		
+	void CopyFrom(DTensor<CPU, Dtype>& src);
 #ifdef USE_GPU
 	/**
 	 * @brief      deeply copy src to this tensor
@@ -61,7 +62,7 @@ public:
 	 *
 	 * @tparam     otherType  the src's data type
 	 */
-	template<typename otherType> 
+	template<typename otherType>
 	void CopyFrom(DTensor<CPU, otherType>& src)
 	{
 		Reshape(src.shape.dims);
@@ -83,11 +84,11 @@ public:
 	 * @param[in]  row_cnt    The row count
 	 */
 	DTensor<CPU, Dtype> GetRowRef(size_t row_start, size_t row_cnt);
-	
+
 	/**
 	 * @brief      set this tensor to be zero
 	 */
-	void Zeros(); 
+	void Zeros();
 
 	/**
 	 * @brief      set selected rows to be zero
@@ -101,7 +102,7 @@ public:
 	 *
 	 * @return     the only element in this tensor
 	 */
-	Dtype AsScalar(); 
+	Dtype AsScalar();
 
 	/**
 	 * @brief      Sets this tensor from random normal
@@ -118,7 +119,7 @@ public:
 	 * @param[in]  ub    The upper bound
 	 */
 	void SetRandU(Dtype lb, Dtype ub);
-	
+
 	/**
 	 * @brief      fill this tensor with same scalar
 	 *
@@ -127,7 +128,7 @@ public:
 	void Fill(Dtype scalar);
 
 	/**
-	 * @brief      the absolute sum of this tensor 
+	 * @brief      the absolute sum of this tensor
 	 *
 	 * @return     the absolute sum
 	 */
@@ -142,7 +143,7 @@ public:
 	void ArgMax(DTensor<CPU, int>& dst, uint axis = 0);
 
 	/**
-	 * @brief      compute and store the result (a dense matrix) of matrix multiplication; 
+	 * @brief      compute and store the result (a dense matrix) of matrix multiplication;
 	 *				this = alpha * A x B + beta * this
 	 * @param      a       operand A (dense matrix)
 	 * @param      b       operand B (dense matrix)
@@ -154,7 +155,7 @@ public:
 	void MM(DTensor<CPU, Dtype>& a, DTensor<CPU, Dtype>& b, Trans transA, Trans transB, Dtype alpha, Dtype beta);
 
 	/**
-	 * @brief      compute and store the result (a dense matrix) of matrix multiplication; 
+	 * @brief      compute and store the result (a dense matrix) of matrix multiplication;
 	 *				this = alpha * A x B + beta * this
 	 * @param      a       operand A (sparse matrix)
 	 * @param      b       operand B (dense matrix)
@@ -184,7 +185,7 @@ public:
 	 * @param[in]  axis  The axis to be reduced; by default it is -1, which will do global reduce
 	 */
 	void Sum(DTensor<CPU, Dtype>& a, int axis = -1);
-	
+
 	/**
 	 * @brief      store the result of mean reduction
 	 *
@@ -268,7 +269,7 @@ public:
 	 * @param[in]  col_start  The col start
 	 * @param[in]  col_cnt    The col count
 	 */
-	void CopyColsFrom(DTensor<CPU, Dtype>& src, size_t col_start, size_t col_cnt); 
+	void CopyColsFrom(DTensor<CPU, Dtype>& src, size_t col_start, size_t col_cnt);
 
 	/**
 	 * @brief      element-wise multiplication between dense and sparse tensor
@@ -294,7 +295,7 @@ public:
 	 *
 	 * @param      src   The other dense tensor
 	 */
-	void ElewiseDiv(DTensor<CPU, Dtype>& src);	
+	void ElewiseDiv(DTensor<CPU, Dtype>& src);
 
 	/**
 	 * @brief      multipy the tensor with a scalar
@@ -319,7 +320,7 @@ public:
 	 * @return     norm2 scalar
 	 */
 	Dtype Norm2();
-	
+
 	/**
 	 * @brief      set each element x to be x^2
 	 */
@@ -354,12 +355,12 @@ public:
 	 * @param[in]  ub    The upper bound
 	 */
 	void Truncate(Dtype lb, Dtype ub);
-	
+
 	/**
 	 * @brief      print tensor to screen; for debug purpose
 	 */
-	void Print2Screen(); 
-	
+	void Print2Screen();
+
 	/**
 	 * the shared ptr to the data structure (which is used to keep the data of this tensor)
 	 */
@@ -377,7 +378,7 @@ public:
 
 	TensorTemplate();
 	virtual ~TensorTemplate() {}
-	
+
 	virtual void Reshape(std::vector<size_t> l) override;
 	virtual MatType GetMatType() override;
 	virtual MatMode GetMatMode() override;
@@ -401,8 +402,8 @@ public:
 	 *
 	 * @param      src   the CPU dense tensor with same data type
 	 */
-	void CopyFrom(DTensor<CPU, int>& src);		
-#ifdef USE_GPU	
+	void CopyFrom(DTensor<CPU, int>& src);
+#ifdef USE_GPU
 	/**
 	 * @brief      deeply copy src to this tensor
 	 *
@@ -420,14 +421,14 @@ public:
 	/**
 	 * @brief      set this tensor to be zero
 	 */
-	void Zeros(); 
+	void Zeros();
 
 	/**
 	 * @brief      if this tensor is actually a scalar, return it; otherwise raise error
 	 *
 	 * @return     the only element in this tensor
 	 */
-	int AsScalar(); 
+	int AsScalar();
 
 	/**
 	 * @brief      fill this tensor with same scalar
